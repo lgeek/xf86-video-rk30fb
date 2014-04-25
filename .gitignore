@@ -1,0 +1,26 @@
+# Libs
+*.lo
+*.la
+src/.libs/
+
+# Backup files
+*~
+
+# Intermediate files generated at build time
+src/.deps/
+Makefile
+Makefile.in
+autom4te.cache
+stamp-h1
+libtool
+configure
+aclocal.m4
+config.*
+depcomp
+install-sh
+ltmain.sh
+missing
+
+
+# Man file
+man/*.4
