@@ -51,35 +51,35 @@ typedef struct
 } UMPBufferInfoRec, *UMPBufferInfoPtr;
 
 typedef struct {
-    int                     ovl_x;
-    int                     ovl_y;
-    int                     ovl_w;
-    int                     ovl_h;
-    Bool                    ovl_cr;
-    Bool			RFAO;
-    char			lstatus;
+    int ovl_x;
+    int ovl_y;
+    int ovl_w;
+    int ovl_h;
+    Bool ovl_cr;
+    Bool RFAO;
+    char lstatus;
 
-    WindowPtr               pOverlayWin;
-    Bool                    bOverlayWinEnabled;
-//    Bool                    bOverlayWinOverlapped;
-//    Bool                    bWalkingAboveOverlayWin;
+    WindowPtr pOverlayWin;
+    Bool bOverlayWinEnabled;
+//    Bool bOverlayWinOverlapped;
+//    Bool bWalkingAboveOverlayWin;
 
-    Bool                    bHardwareCursorIsInUse;
+    Bool bHardwareCursorIsInUse;
     struct fb_var_screeninfo fb_var;
-    DestroyWindowProcPtr    DestroyWindow;
+    DestroyWindowProcPtr DestroyWindow;
 //    PostValidateTreeProcPtr PostValidateTree;
 //    GetImageProcPtr         GetImage;
-    DestroyPixmapProcPtr    DestroyPixmap;
-    ump_secure_id		ump_fb_secure_id1;
-//    ump_secure_id		ump_fb_secure_id2;
-//    ump_secure_id		ump_null_secure_id;
-//    ump_handle			ump_null_handle;
-    DRI2Buffer2Ptr		buf_back;
+    DestroyPixmapProcPtr DestroyPixmap;
+    ump_secure_id ump_fb_secure_id1;
+//    ump_secure_id ump_fb_secure_id2;
+//    ump_secure_id ump_null_secure_id;
+//    ump_handle ump_null_handle;
+    DRI2Buffer2Ptr buf_back;
     UMPBufferInfoPtr        HashPixmapToUMP;
 
     int                     drm_fd;
-    OvlMemPgPtr		PMemBuf;
-    OvlLayPg		OvlPg;
+    OvlMemPgPtr PMemBuf;
+    OvlLayPg OvlPg;
 } Rk30MaliRec, *Rk30MaliPtr;
 
 //**********************************************

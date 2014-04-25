@@ -58,53 +58,53 @@ typedef enum
 } OvlLayoutType;
 
 typedef struct {
-	ump_secure_id	ump_fb_secure_id;
-	unsigned char	*fb_mem;
-	unsigned char	*fb_mio;
-	uint32_t	phadr_mio;
-	uint32_t	phadr_mem;
-	uint32_t	offset;
-	uint32_t	offset_mio;
-	OvlMemPgType	MemPgType;
-	Bool		InUse;
+    ump_secure_id ump_fb_secure_id;
+    unsigned char *fb_mem;
+    unsigned char *fb_mio;
+    uint32_t phadr_mio;
+    uint32_t phadr_mem;
+    uint32_t offset;
+    uint32_t offset_mio;
+    OvlMemPgType MemPgType;
+    Bool InUse;
 } OvlMemPgRec, *OvlMemPgPtr;
 
 typedef struct {
-	int		fd;
-//	OvlMemPg	OvlMemPg;
-	OvlMemPgPtr	OvlMemPg;
-	struct fb_fix_screeninfo	fix;
-	OvlLayoutType	FbType;
+    int fd;
+//    OvlMemPg OvlMemPg;
+    OvlMemPgPtr OvlMemPg;
+    struct fb_fix_screeninfo    fix;
+    OvlLayoutType FbType;
 } OvlFbRec, *OvlFbPtr;
 
 typedef struct {
-//	OvlFbPg			OvlFb;
-	OvlFbPtr		OvlFb;
-	struct fb_var_screeninfo	var;
-	Bool			InUse;
-	OvlLayoutType		ReqType;
-	struct rga_req		RGA_req;
-	struct rk29_ipp_req	IPP_req;
-	Bool			ResChange;
+//    OvlFbPg OvlFb;
+    OvlFbPtr OvlFb;
+    struct fb_var_screeninfo var;
+    Bool InUse;
+    OvlLayoutType ReqType;
+    struct rga_req RGA_req;
+    struct rk29_ipp_req IPP_req;
+    Bool ResChange;
 } OvlLayRec, *OvlLayPtr;
 
 typedef struct {
-//	int		fd_ui;
-	int		fd_RGA;
-	int		fd_IPP;
-	OvlLayRec	OvlLay[OVLs];
-	OvlFbRec	OvlFb[OVLs];
-	OvlMemPgRec	OvlMemPg[OVL_MEM_PGs];//0:, 1:, 2: 3: 4:
-	OvlMemPg	OvlMemPgs;
-	uint32_t	MaxPgSize;
-//	struct fb_fix_screeninfo	fix;
-	struct fb_var_screeninfo	cur_var;
-	struct fb_var_screeninfo	sav_var;
-	Bool		ResChange;
-//	uint8_t		ShadowPg;
-//	uint8_t		rga_pa;
-	pthread_mutex_t	rgamutex;
-	pthread_mutex_t	ippmutex;
+//    int fd_ui;
+    int fd_RGA;
+    int fd_IPP;
+    OvlLayRec OvlLay[OVLs];
+    OvlFbRec OvlFb[OVLs];
+    OvlMemPgRec OvlMemPg[OVL_MEM_PGs];//0:, 1:, 2: 3: 4:
+    OvlMemPg OvlMemPgs;
+    uint32_t MaxPgSize;
+//    struct fb_fix_screeninfo    fix;
+    struct fb_var_screeninfo cur_var;
+    struct fb_var_screeninfo sav_var;
+    Bool ResChange;
+//    uint8_t ShadowPg;
+//    uint8_t rga_pa;
+    pthread_mutex_t rgamutex;
+    pthread_mutex_t ippmutex;
 } OvlHWRec, *OvlHWPtr;
 
 
@@ -118,8 +118,8 @@ int OvlReset(ScrnInfoPtr pScrn);
 int OvlFlushPg(ScrnInfoPtr pScrn, OvlMemPgPtr PMemPg, int mode);
 int OvlResetFB(ScrnInfoPtr pScrn, OvlLayPg layout);
 int OvlCopyHWBufCF(ScrnInfoPtr pScrn, uint32_t SrcYAddr, uint32_t SrcUVAddr, uint32_t SrcVAddr,
-				int SrcFrmt, int DstFrmt, uint32_t DstYAddr,
-				int Drw_w, int Drw_h, int Drw_x, int Drw_y, int Src_vir, int Dst_vir, Bool useMMU);
+                int SrcFrmt, int DstFrmt, uint32_t DstYAddr,
+                int Drw_w, int Drw_h, int Drw_x, int Drw_y, int Src_vir, int Dst_vir, Bool useMMU);
 //-------------------------------------------------------------
 OvlMemPgPtr OvlGetBufByLay(ScrnInfoPtr pScrn, OvlLayPg layout);
 int OvlGetVXresByLay(ScrnInfoPtr pScrn, OvlLayPg layout);

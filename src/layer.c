@@ -42,7 +42,7 @@
 #define MBufByLay(layout) (FbByLay(layout)->OvlMemPg)
 
 #ifdef DEBUG
-#define OVLDBG(format, args...)		xf86DrvMsg(pScrn->scrnIndex, X_WARNING, format, ## args)
+#define OVLDBG(format, args...)        xf86DrvMsg(pScrn->scrnIndex, X_WARNING, format, ## args)
 #else
 #define OVLDBG(format, args...)
 #endif
@@ -85,9 +85,9 @@ static Bool LayIsUIfb(ScrnInfoPtr pScrn, OvlLayPg layout)
     OvlHWPtr overlay = pMxv->OvlHW;
 
     if(FbByLay(layout)->FbType == UIL)
-	return TRUE;
+    return TRUE;
     else
-	return FALSE;
+    return FALSE;
 }
 
 //--------------------------------------------------------------------------------
@@ -100,9 +100,9 @@ OvlMemPgPtr OvlGetBufByLay(ScrnInfoPtr pScrn, OvlLayPg layout)
     OvlHWPtr overlay = pMxv->OvlHW;
 
     if(layout < OVLs && layout >= 0)
-	return MBufByLay(layout);
+    return MBufByLay(layout);
     else
-	return NULL;
+    return NULL;
 }
 
 //--------------------------------------------------------------------------------
@@ -112,9 +112,9 @@ int OvlGetVXresByLay(ScrnInfoPtr pScrn, OvlLayPg layout)
     OvlHWPtr overlay = pMxv->OvlHW;
 
     if(layout < OVLs && layout >= 0)
-	return overlay->OvlLay[layout].var.xres_virtual;
+    return overlay->OvlLay[layout].var.xres_virtual;
     else
-	return -1;
+    return -1;
 }
 
 //++++++++++++++++++++++++++++++++++++IPP++++++++++++++++++++++++++++++++++++++++++
@@ -130,11 +130,11 @@ static int ovlIppBlit(ScrnInfoPtr pScrn, struct rk29_ipp_req *ipp_req)
     int ret, timeout = 0;
 
     while(pthread_mutex_trylock(&overlay->ippmutex) ==  EBUSY){
-	timeout++;
-	if(timeout > HW_TIMEOUT){
-	    OVLDBG("Timeout ipp\n");
-	    return -1;
-	}
+    timeout++;
+    if(timeout > HW_TIMEOUT){
+        OVLDBG("Timeout ipp\n");
+        return -1;
+    }
     }
     ret = ioctl(overlay->fd_IPP, IPP_BLIT_SYNC, ipp_req);
     pthread_mutex_unlock(&overlay->ippmutex);
@@ -142,7 +142,7 @@ static int ovlIppBlit(ScrnInfoPtr pScrn, struct rk29_ipp_req *ipp_req)
 }
 //-----------------------------------------------------------------------
 static void ovlIppInitReg(ScrnInfoPtr pScrn, struct rk29_ipp_req *IPP_req, uint32_t SrcYAddr, int SrcFrmt, int Src_w, int Src_h,
-		uint32_t DstYAddr, int Drw_w, int Drw_h, int Drw_x, int Drw_y, int Src_vir, int Dst_vir)
+        uint32_t DstYAddr, int Drw_w, int Drw_h, int Drw_x, int Drw_y, int Src_vir, int Dst_vir)
 {
     FBDevPtr pMxv = FBDEVPTR(pScrn);
     OvlHWPtr overlay = pMxv->OvlHW;
@@ -179,11 +179,11 @@ static int ovlRgaBlit(ScrnInfoPtr pScrn, struct rga_req *RGA_req, int syncmode)
     int ret, timeout = 0;
 
     while(pthread_mutex_trylock(&overlay->rgamutex) ==  EBUSY){
-	timeout++;
-	if(timeout > HW_TIMEOUT){
-	    OVLDBG("Timeout rga\n");
-	    return -1;
-	}
+    timeout++;
+    if(timeout > HW_TIMEOUT){
+        OVLDBG("Timeout rga\n");
+        return -1;
+    }
 
     }
     ret = ioctl(overlay->fd_RGA, syncmode, RGA_req);
@@ -192,7 +192,7 @@ static int ovlRgaBlit(ScrnInfoPtr pScrn, struct rga_req *RGA_req, int syncmode)
 }
 //------------------------------------------------------------------------------
 static void ovlRgaInitReg(ScrnInfoPtr pScrn, struct rga_req *RGA_req, uint32_t SrcYAddr, int SrcFrmt, int DstFrmt,
-		uint32_t DstYAddr, int Drw_w, int Drw_h, int Drw_x, int Drw_y, int Src_vir, int Dst_vir)
+        uint32_t DstYAddr, int Drw_w, int Drw_h, int Drw_x, int Drw_y, int Src_vir, int Dst_vir)
 {
     FBDevPtr pMxv = FBDEVPTR(pScrn);
     OvlHWPtr overlay = pMxv->OvlHW;
@@ -246,55 +246,55 @@ static void ovlSelHwMods(ScrnInfoPtr pScrn, int mode, OvlLayPg layout, Bool Src)
 {
     FBDevPtr pMxv = FBDEVPTR(pScrn);
     OvlHWPtr overlay = pMxv->OvlHW;
-    uint8_t		IPP_mode;
-    uint8_t		RGA_mode;
+    uint8_t        IPP_mode;
+    uint8_t        RGA_mode;
 
     switch(mode) {
     case RGBX_8888:
     case RGBA_8888:
-	RGA_mode = RK_FORMAT_RGBX_8888;
-	IPP_mode = IPP_XRGB_8888;
-	break;
+    RGA_mode = RK_FORMAT_RGBX_8888;
+    IPP_mode = IPP_XRGB_8888;
+    break;
     case RGB_888:
-	RGA_mode = RK_FORMAT_RGB_888;
-	IPP_mode = 0;//TODO: add support to ipp
-	break;
+    RGA_mode = RK_FORMAT_RGB_888;
+    IPP_mode = 0;//TODO: add support to ipp
+    break;
     case RGB_565:
-	RGA_mode = RK_FORMAT_RGB_565;
-	IPP_mode = IPP_RGB_565;
-	break;
+    RGA_mode = RK_FORMAT_RGB_565;
+    IPP_mode = IPP_RGB_565;
+    break;
     case YCrCb_NV12_SP:
-	RGA_mode = RK_FORMAT_YCbCr_420_SP;
-	IPP_mode = IPP_Y_CBCR_H2V2;//nearest suitable
+    RGA_mode = RK_FORMAT_YCbCr_420_SP;
+    IPP_mode = IPP_Y_CBCR_H2V2;//nearest suitable
         break;
     case YCbCr_422_SP:
-	RGA_mode = RK_FORMAT_YCrCb_422_SP;
-	IPP_mode = IPP_Y_CBCR_H2V1;//nearest suitable
-	break;
+    RGA_mode = RK_FORMAT_YCrCb_422_SP;
+    IPP_mode = IPP_Y_CBCR_H2V1;//nearest suitable
+    break;
     case YCrCb_NV12_P:
-	RGA_mode = RK_FORMAT_YCbCr_420_P;
-	IPP_mode = IPP_Y_CBCR_H2V2;
+    RGA_mode = RK_FORMAT_YCbCr_420_P;
+    IPP_mode = IPP_Y_CBCR_H2V2;
         break;
     case YCbCr_422_P:
-	RGA_mode = RK_FORMAT_YCrCb_422_P;
-	IPP_mode = IPP_Y_CBCR_H2V1;
-	break;
+    RGA_mode = RK_FORMAT_YCrCb_422_P;
+    IPP_mode = IPP_Y_CBCR_H2V1;
+    break;
     case YCrCb_444:
-	break;
+    break;
 
     default:
-	RGA_mode = RK_FORMAT_RGBX_8888;
-	IPP_mode = IPP_XRGB_8888;
+    RGA_mode = RK_FORMAT_RGBX_8888;
+    IPP_mode = IPP_XRGB_8888;
     }
     if(layout >= 0 && layout < OVLs){
-	if(Src){
-	    overlay->OvlLay[layout].IPP_req.src0.fmt = IPP_mode;
-	    overlay->OvlLay[layout].RGA_req.src.format = RGA_mode;
-	}
-	else{
-	    overlay->OvlLay[layout].RGA_req.dst.format = RGA_mode;
-	}
-	overlay->OvlLay[layout].IPP_req.dst0.fmt = overlay->OvlLay[layout].IPP_req.src0.fmt;
+    if(Src){
+        overlay->OvlLay[layout].IPP_req.src0.fmt = IPP_mode;
+        overlay->OvlLay[layout].RGA_req.src.format = RGA_mode;
+    }
+    else{
+        overlay->OvlLay[layout].RGA_req.dst.format = RGA_mode;
+    }
+    overlay->OvlLay[layout].IPP_req.dst0.fmt = overlay->OvlLay[layout].IPP_req.src0.fmt;
     }
 }
 //*******************************************************************************
@@ -305,18 +305,18 @@ int OvlPanBufSync(ScrnInfoPtr pScrn, OvlMemPgPtr PMemPg, OvlLayPg layout)
     uint32_t tmp[2];
 
     if(layout < OVLs && layout >= 0){
-	tmp[0] = PMemPg->offset;
-	tmp[1] = tmp[0];
-	if(!LayIsUIfb(pScrn, layout))
-	    return ioctl(FbByLay(layout)->fd, FBIOSET_FBMEM_OFFS_SYNC, &tmp);
+    tmp[0] = PMemPg->offset;
+    tmp[1] = tmp[0];
+    if(!LayIsUIfb(pScrn, layout))
+        return ioctl(FbByLay(layout)->fd, FBIOSET_FBMEM_OFFS_SYNC, &tmp);
     }
-	return -1;
+    return -1;
 }
 //--------------------------------------------------------------------------------
 int OvlSetColorKey(ScrnInfoPtr pScrn, uint32_t color)
 {
     FBDevPtr pMxv = FBDEVPTR(pScrn);
-    OvlHWPtr	overlay = pMxv->OvlHW;
+    OvlHWPtr    overlay = pMxv->OvlHW;
 
     return ioctl(overlay->OvlFb[UserInterfaceFB].fd, FBIOSET_COLORKEY, &color);
 }
@@ -328,7 +328,7 @@ int OvlWaitSync(ScrnInfoPtr pScrn, OvlLayPg layout)
     uint32_t tmp=0;
 
     if(!pMxv->WaitForSync)
-	return -1;
+    return -1;
 
     return ioctl(FbByLay(layout)->fd, FBIO_WAITFORVSYNC, &tmp);
 }
@@ -340,10 +340,10 @@ int OvlCpBufToDisp(ScrnInfoPtr pScrn, OvlMemPgPtr PMemPg, OvlLayPg layout)
     OvlLayPg t;
 
     OVLDBG("OvlCpBufToDisp OvlPg:%d\n",layout);
-//	overlay->OvlLay[layout].ResChange = FALSE;
+//    overlay->OvlLay[layout].ResChange = FALSE;
     if(layout < OVLs && layout >= 0){
-	overlay->OvlLay[layout].RGA_req.src.yrgb_addr = PMemPg->phadr_mem;
-	return ovlRgaBlit(pScrn, &overlay->OvlLay[layout].RGA_req, RGA_BLIT_SYNC);
+    overlay->OvlLay[layout].RGA_req.src.yrgb_addr = PMemPg->phadr_mem;
+    return ovlRgaBlit(pScrn, &overlay->OvlLay[layout].RGA_req, RGA_BLIT_SYNC);
     }
     OVLDBG("OvlCpBufToDisp Error\n");
     return -1;
@@ -361,45 +361,45 @@ int ovlDrwClrRect(ScrnInfoPtr pScrn, OvlLayPg layout, int Drw_x, int Drw_y, int 
     mode = overlay->OvlLay[layout].var.nonstd;
     if(MBufByLay(layout)->fb_mem != NULL){
 
-	switch(mode){//TODO
-	case RGBX_8888:
+    switch(mode){//TODO
+    case RGBX_8888:
         case RGBA_8888:
-	    bpp = 4;
-	case RGB_888:
-	    bpp = 3;
-	case RGB_565:
-	    bpp = 2;
-	    return -1;//TODO not tested
-	    break;
-	case YCrCb_NV12_SP:
-//	    bpp = 1;//average 0.5 for color and 1 for lum 
-	    YUV420fl = TRUE;
-	case YCbCr_422_SP:
-	    YUV = TRUE;
-	    bpp = 1;//average 1 for color and 1 for lum 
-	    break;
-	default:
-	    return -1;
-	}
+        bpp = 4;
+    case RGB_888:
+        bpp = 3;
+    case RGB_565:
+        bpp = 2;
+        return -1;//TODO not tested
+        break;
+    case YCrCb_NV12_SP:
+//        bpp = 1;//average 0.5 for color and 1 for lum 
+        YUV420fl = TRUE;
+    case YCbCr_422_SP:
+        YUV = TRUE;
+        bpp = 1;//average 1 for color and 1 for lum 
+        break;
+    default:
+        return -1;
+    }
 
-	v_w = overlay->OvlLay[layout].var.xres_virtual;
-	buf = MBufByLay(layout)->fb_mem + (Drw_y*v_w+Drw_x)*bpp;
-	if(YUV)
-	    mbuf = buf + MBufByLay(layout)->offset_mio;
-	while(Drw_h>0){
-	    memset(buf,0,Drw_w*bpp);
-	    buf =buf + v_w*bpp;
-	    if(YUV){
-		if(!(YUV420fl && (Drw_h&1))){
-			memset(mbuf,0,Drw_w*bpp);
-			mbuf =mbuf + v_w*bpp;
-		}
-	    }
-	    Drw_h--;
-	}
+    v_w = overlay->OvlLay[layout].var.xres_virtual;
+    buf = MBufByLay(layout)->fb_mem + (Drw_y*v_w+Drw_x)*bpp;
+    if(YUV)
+        mbuf = buf + MBufByLay(layout)->offset_mio;
+    while(Drw_h>0){
+        memset(buf,0,Drw_w*bpp);
+        buf =buf + v_w*bpp;
+        if(YUV){
+        if(!(YUV420fl && (Drw_h&1))){
+            memset(mbuf,0,Drw_w*bpp);
+            mbuf =mbuf + v_w*bpp;
+        }
+        }
+        Drw_h--;
+    }
     }
     else
-	return -1;
+    return -1;
 }
 
 //------------------------------------------------------------
@@ -410,7 +410,7 @@ int OvlClearBuf(ScrnInfoPtr pScrn, OvlMemPgPtr PMemPg)
     uint32_t tmp[2];
 
     if(PMemPg != NULL && PMemPg->MemPgType != UIFB_MEM/* !UI fb*/)
-	return -1;
+    return -1;
     tmp[0] = PMemPg->offset;
     tmp[1] = overlay->MaxPgSize;
     return ioctl(overlay->OvlFb[MasterOvlFB].fd, FBIOSET_FBMEM_CLR, &tmp);
@@ -419,17 +419,17 @@ int OvlClearBuf(ScrnInfoPtr pScrn, OvlMemPgPtr PMemPg)
 int OvlUnMapBufMem(ScrnInfoPtr pScrn, OvlMemPgPtr PMemPg)
 {
     FBDevPtr pMxv = FBDEVPTR(pScrn);
-    OvlHWPtr	overlay = pMxv->OvlHW;
+    OvlHWPtr    overlay = pMxv->OvlHW;
     int ret = -1;
 
     if(PMemPg != NULL && PMemPg->MemPgType != UIFB_MEM/* !UI fb*/){
-	if(PMemPg->fb_mem == NULL)
-	    ret = 0;
-	else{
-	    ret = munmap(PMemPg->fb_mem, overlay->MaxPgSize);
-	    if(ret == 0)
-		PMemPg->fb_mem = NULL;
-	}
+    if(PMemPg->fb_mem == NULL)
+        ret = 0;
+    else{
+        ret = munmap(PMemPg->fb_mem, overlay->MaxPgSize);
+        if(ret == 0)
+        PMemPg->fb_mem = NULL;
+    }
     }
     return ret;
 }
@@ -437,13 +437,13 @@ int OvlUnMapBufMem(ScrnInfoPtr pScrn, OvlMemPgPtr PMemPg)
 void * OvlMapBufMem(ScrnInfoPtr pScrn, OvlMemPgPtr PMemPg)
 {
     FBDevPtr pMxv = FBDEVPTR(pScrn);
-    OvlHWPtr	overlay = pMxv->OvlHW;
+    OvlHWPtr    overlay = pMxv->OvlHW;
 
     if(PMemPg != NULL){
-	if(PMemPg->fb_mem == NULL)
-	    PMemPg->fb_mem = mmap( NULL, overlay->MaxPgSize, PROT_READ | PROT_WRITE,
-					MAP_SHARED, overlay->OvlFb[MasterOvlFB].fd, PMemPg->offset);
-	return PMemPg->fb_mem;
+    if(PMemPg->fb_mem == NULL)
+        PMemPg->fb_mem = mmap( NULL, overlay->MaxPgSize, PROT_READ | PROT_WRITE,
+                    MAP_SHARED, overlay->OvlFb[MasterOvlFB].fd, PMemPg->offset);
+    return PMemPg->fb_mem;
     }
     return NULL;
 }
@@ -454,9 +454,9 @@ int OvlFlushPg(ScrnInfoPtr pScrn, OvlMemPgPtr PMemPg, int mode)
     OvlHWPtr overlay = pMxv->OvlHW;
 
     if(PMemPg->fb_mem != NULL)
-	return msync(PMemPg->fb_mem,overlay->MaxPgSize, mode);
+    return msync(PMemPg->fb_mem,overlay->MaxPgSize, mode);
     else
-	return -1;
+    return -1;
 }
 //--------------------------------------------------------------------
 int ovlSetMode(ScrnInfoPtr pScrn, unsigned short xres, unsigned short yres, unsigned char mode, OvlLayPg layout)
@@ -467,25 +467,25 @@ int ovlSetMode(ScrnInfoPtr pScrn, unsigned short xres, unsigned short yres, unsi
     int ret=0;
 
     if(layout >= OVLs || layout < 0)
-	return -1;
+    return -1;
     if(!LayIsUIfb(pScrn, layout)){/*TODO !UIL*/
-	if((xres > overlay->OvlLay[layout].var.xres_virtual)||(yres > overlay->OvlLay[layout].var.yres_virtual)) return -1;
+    if((xres > overlay->OvlLay[layout].var.xres_virtual)||(yres > overlay->OvlLay[layout].var.yres_virtual)) return -1;
 //    if((xres > overlay->cur_var.xres)||(yres > overlay->cur_var.yres)) return -1;
-	if(mode>0)
-	    overlay->OvlLay[layout].var.nonstd = mode;
-	if(xres>0)
-	    overlay->OvlLay[layout].var.xres = xres;
-	if(yres>0)
-	    overlay->OvlLay[layout].var.yres = yres;
-	ret = ioctl(FbByLay(layout)->fd, FBIOPUT_VSCREENINFO, &overlay->OvlLay[layout].var);
+    if(mode>0)
+        overlay->OvlLay[layout].var.nonstd = mode;
+    if(xres>0)
+        overlay->OvlLay[layout].var.xres = xres;
+    if(yres>0)
+        overlay->OvlLay[layout].var.yres = yres;
+    ret = ioctl(FbByLay(layout)->fd, FBIOPUT_VSCREENINFO, &overlay->OvlLay[layout].var);
 
-	if(ret == 0){
-	    ovlSelHwMods(pScrn, overlay->OvlLay[layout].var.nonstd, layout, DST_MODE);
-	    overlay->OvlLay[layout].ResChange = FALSE;
-	}
+    if(ret == 0){
+        ovlSelHwMods(pScrn, overlay->OvlLay[layout].var.nonstd, layout, DST_MODE);
+        overlay->OvlLay[layout].ResChange = FALSE;
+    }
     }
     else
-	ovlSelHwMods(pScrn, overlay->cur_var.nonstd, layout, DST_MODE);
+    ovlSelHwMods(pScrn, overlay->cur_var.nonstd, layout, DST_MODE);
     return ret;
 }
 //--------------------------------------------------------------------------------
@@ -495,9 +495,9 @@ static Bool ovlUpdVarOnChangeRes(ScrnInfoPtr pScrn, OvlLayPg layout)
     OvlHWPtr overlay = pMxv->OvlHW;
 
     if(overlay->OvlLay[layout].ResChange){
-	memcpy(&overlay->OvlLay[layout].var, &overlay->cur_var, sizeof(struct fb_var_screeninfo));
-	overlay->OvlLay[layout].ResChange = FALSE;
-	return TRUE;
+    memcpy(&overlay->OvlLay[layout].var, &overlay->cur_var, sizeof(struct fb_var_screeninfo));
+    overlay->OvlLay[layout].ResChange = FALSE;
+    return TRUE;
     }
     return FALSE;
 }
@@ -508,14 +508,14 @@ int OvlSetupFb(ScrnInfoPtr pScrn, int SrcFrmt, int DstFrmt, OvlLayPg layout)
     OvlHWPtr overlay = pMxv->OvlHW;
 
     if(layout >= OVLs || layout < 0)
-	return -1;
+    return -1;
     ovlUpdVarOnChangeRes(pScrn, layout);
     ovlRgaInitReg(pScrn, &overlay->OvlLay[layout].RGA_req, /*SrcYAddr*/0, 0, 0,
-	FbByLay(layout)->OvlMemPg->phadr_mem, 0, 0, 0, 0, overlay->OvlLay[layout].var.xres_virtual/*TODO SRC*/, overlay->OvlLay[layout].var.xres_virtual);
+    FbByLay(layout)->OvlMemPg->phadr_mem, 0, 0, 0, 0, overlay->OvlLay[layout].var.xres_virtual/*TODO SRC*/, overlay->OvlLay[layout].var.xres_virtual);
 //    if(DstFrmt)
-	ovlSetMode(pScrn, 0 , 0/*TODO*/, DstFrmt, layout);
+    ovlSetMode(pScrn, 0 , 0/*TODO*/, DstFrmt, layout);
     if(!SrcFrmt)
-	SrcFrmt = overlay->OvlLay[layout].var.nonstd;
+    SrcFrmt = overlay->OvlLay[layout].var.nonstd;
     ovlSelHwMods(pScrn, SrcFrmt, layout, SRC_MODE);
     return 0;
 }
@@ -528,10 +528,10 @@ int OvlSetupBufDrw(ScrnInfoPtr pScrn, int Drw_x, int Drw_y, int Drw_w, int Drw_h
     OvlFbPg FbPg;
 
     if(layout >= OVLs || layout < 0)
-	return -1;
+    return -1;
     if(SrcPitch){
-	ovlRgaDrwAdd(pScrn, &overlay->OvlLay[layout].RGA_req, Drw_w, Drw_h, Drw_x, Drw_y, SrcPitch);
-	return 0;
+    ovlRgaDrwAdd(pScrn, &overlay->OvlLay[layout].RGA_req, Drw_w, Drw_h, Drw_x, Drw_y, SrcPitch);
+    return 0;
     }
     return -1;
 //    OvlClearBuf(pScrn, overlay->OvlFb[overlay->OvlLay[layout].OvlFb].OvlMemPg);
@@ -546,14 +546,14 @@ int OvlSetupDrw(ScrnInfoPtr pScrn, int Drw_x, int Drw_y, int Drw_w, int Drw_h, i
 //    OvlFbPg FbPg;
 
     if(layout >= OVLs || layout < 0)
-	return -1;
+    return -1;
 
     if(BlackBorder && (overlay->OvlLay[layout].var.xres_virtual > (Src_h+1))){
-	ovlDrwClrRect(pScrn, layout, 0, Src_h, Src_w, 2);
-	nSrc_h = Src_h+2;
+    ovlDrwClrRect(pScrn, layout, 0, Src_h, Src_w, 2);
+    nSrc_h = Src_h+2;
     }
     else
-	nSrc_h = Src_h;
+    nSrc_h = Src_h;
 
     pt.poffset_x = Drw_x;
     pt.poffset_y = Drw_y;
@@ -575,27 +575,27 @@ int OvlSetupDrw(ScrnInfoPtr pScrn, int Drw_x, int Drw_y, int Drw_w, int Drw_h, i
     uint32_t tmp[2];
 
     if(pg < overlay->OvlMemPgs && pg >= 0 && layout < OVLs && layout >= 0){
-	tmp[0] = overlay->OvlMemPg[MemPg].offset;
-	tmp[1] = tmp[0];
-	if(!LayIsUIfb(pScrn, layout))
-	    return ioctl(overlay->OvlFb[FbByLay(layout)].fd, FBIOSET_FBMEM_OFFS_SYNC, &tmp);
+    tmp[0] = overlay->OvlMemPg[MemPg].offset;
+    tmp[1] = tmp[0];
+    if(!LayIsUIfb(pScrn, layout))
+        return ioctl(overlay->OvlFb[FbByLay(layout)].fd, FBIOSET_FBMEM_OFFS_SYNC, &tmp);
     }
 
     switch(disp){
     case 1:
-	overlay->ShadowPg = 1;
-	break;
+    overlay->ShadowPg = 1;
+    break;
     case 2:
-	overlay->var.yoffset = overlay->var.yres;
-	overlay->ShadowPg = 0;
-	break;
+    overlay->var.yoffset = overlay->var.yres;
+    overlay->ShadowPg = 0;
+    break;
     default:
-	if(overlay->ShadowPg){
-	    overlay->var.yoffset = overlay->var.yres;
-	    overlay->ShadowPg = 0;
-	}
-	else
-	    overlay->ShadowPg = 1;
+    if(overlay->ShadowPg){
+        overlay->var.yoffset = overlay->var.yres;
+        overlay->ShadowPg = 0;
+    }
+    else
+        overlay->ShadowPg = 1;
     }
     ret = OvlSync(pScrn);
     ret = ioctl(overlay->fd_o1, FBIOPAN_DISPLAY, &overlay->var);
@@ -612,9 +612,9 @@ int OvlEnable(ScrnInfoPtr pScrn, OvlLayPg layout, int enable)
     OvlHWPtr overlay = pMxv->OvlHW;
 
     if(layout >= OVLs || layout < 0)
-	return -1;
+    return -1;
     if(LayIsUIfb(pScrn, layout))/*TODO !UIL*/
-	return -1;
+    return -1;
     
     return ioctl(FbByLay(layout)->fd, FBIOSET_ENABLE, &enable);
 }
@@ -626,53 +626,53 @@ int OvlResetFB(ScrnInfoPtr pScrn, OvlLayPg layout)
     int ret;
 
     if(layout >= OVLs || layout < 0)
-	return -1;
+    return -1;
 //    OvlClearBuf(pScrn, 1);
     ret = ioctl(FbByLay(layout)->fd, FBIOPUT_VSCREENINFO, &overlay->sav_var);
 //    if(ret == 0 && dev == FBUI) //TODO res change by x func
-//	ret =  OvlUpdSavMod(pScrn);
+//    ret =  OvlUpdSavMod(pScrn);
     return ret;
 }
 //------------------------------------------------------------------
 OvlMemPgPtr OvlAllocMemPg(ScrnInfoPtr pScrn, OvlMemPgType type)//TODO type?
 {
     FBDevPtr pMxv = FBDEVPTR(pScrn);
-    OvlHWPtr	overlay = pMxv->OvlHW;
+    OvlHWPtr    overlay = pMxv->OvlHW;
     OvlMemPg i;
 
     for(i=overlay->OvlMemPgs-1;i>=0;i--)
-	if(overlay->OvlMemPg[i].MemPgType == BUF_MEM && !overlay->OvlMemPg[i].InUse){
-	    overlay->OvlMemPg[i].InUse = TRUE;
-	    return &overlay->OvlMemPg[i];
-	}
+    if(overlay->OvlMemPg[i].MemPgType == BUF_MEM && !overlay->OvlMemPg[i].InUse){
+        overlay->OvlMemPg[i].InUse = TRUE;
+        return &overlay->OvlMemPg[i];
+    }
     return NULL;
 }
 //------------------------------------------------------------------
 void OvlFreeMemPg(ScrnInfoPtr pScrn, OvlMemPgPtr PMemPg)
 {
     FBDevPtr pMxv = FBDEVPTR(pScrn);
-    OvlHWPtr	overlay = pMxv->OvlHW;
+    OvlHWPtr    overlay = pMxv->OvlHW;
 
     if(PMemPg != NULL)
-	PMemPg->InUse = FALSE;
+    PMemPg->InUse = FALSE;
 }
 //--------------------------------------------------------------
 /*OvlLayPg ovlSwapLay(ScrnInfoPtr pScrn, OvlLayPg pg, OvlLayoutType type)
 {
     FBDevPtr pMxv = FBDEVPTR(pScrn);
-    OvlHWPtr	overlay = pMxv->OvlHW;
+    OvlHWPtr    overlay = pMxv->OvlHW;
     OvlLayPg i,t;
 
     if(overlay->OvlLay[pg].ReqType==ANUL){
-	for(i=0;i<OVLs;i++){
-	    if(!overlay->OvlLay[i].InUse){
-		t = FbByLay(i);
-		overlay->OvlLay[i].OvlFb = FbByLay(pg);
-		FbByLay(pg) = t;
-		OvlSetupFb(pScrn, 0, 0, pg);//TODO  call hw init fb, rga ipp init
-		return i;
-	    }
-	}
+    for(i=0;i<OVLs;i++){
+        if(!overlay->OvlLay[i].InUse){
+        t = FbByLay(i);
+        overlay->OvlLay[i].OvlFb = FbByLay(pg);
+        FbByLay(pg) = t;
+        OvlSetupFb(pScrn, 0, 0, pg);//TODO  call hw init fb, rga ipp init
+        return i;
+        }
+    }
     }
     return ERRORL;
 }
@@ -681,38 +681,38 @@ void OvlFreeMemPg(ScrnInfoPtr pScrn, OvlMemPgPtr PMemPg)
 OvlLayPg OvlAllocLay(ScrnInfoPtr pScrn, OvlLayoutType type)
 {
     FBDevPtr pMxv = FBDEVPTR(pScrn);
-    OvlHWPtr	overlay = pMxv->OvlHW;
+    OvlHWPtr    overlay = pMxv->OvlHW;
     OvlLayPg i,t;
 
     switch(type){
     case UIL:
     case SCALEL:
     case NOT_SCALEL:
-	for(i=0;i<OVLs;i++){
-	    if(FbByLay(i)->FbType == type){
-		if(!overlay->OvlLay[i].InUse){
-		    t = i;
-		    break;
-		}
-		else{
-//		    t = ovlSwapLay(pScrn, i, type);
-//		    if(t==ERRORL)
-			return ERRORL;
-		}
-	    }
-	}
-	overlay->OvlLay[t].InUse = TRUE;
-	overlay->OvlLay[t].ReqType = type;
-	return t;
-	break;
+    for(i=0;i<OVLs;i++){
+        if(FbByLay(i)->FbType == type){
+        if(!overlay->OvlLay[i].InUse){
+            t = i;
+            break;
+        }
+        else{
+//            t = ovlSwapLay(pScrn, i, type);
+//            if(t==ERRORL)
+            return ERRORL;
+        }
+        }
+    }
+    overlay->OvlLay[t].InUse = TRUE;
+    overlay->OvlLay[t].ReqType = type;
+    return t;
+    break;
     case ANYL:
-	for(i=0;i<OVLs;i++){
-	    if(!overlay->OvlLay[i].InUse){
-		overlay->OvlLay[i].InUse = TRUE;
-		overlay->OvlLay[i].ReqType = type;
-		return i;
-	    }
-	}
+    for(i=0;i<OVLs;i++){
+        if(!overlay->OvlLay[i].InUse){
+        overlay->OvlLay[i].InUse = TRUE;
+        overlay->OvlLay[i].ReqType = type;
+        return i;
+        }
+    }
     }
     return ERRORL;
 }
@@ -720,29 +720,29 @@ OvlLayPg OvlAllocLay(ScrnInfoPtr pScrn, OvlLayoutType type)
 void OvlFreeLay(ScrnInfoPtr pScrn, OvlLayPg layout)
 {
     FBDevPtr pMxv = FBDEVPTR(pScrn);
-    OvlHWPtr	overlay = pMxv->OvlHW;
+    OvlHWPtr    overlay = pMxv->OvlHW;
 
     if(layout < OVLs && layout >= 0){
-	overlay->OvlLay[layout].InUse = FALSE;
-	overlay->OvlLay[layout].ReqType = ERRORL;
+    overlay->OvlLay[layout].InUse = FALSE;
+    overlay->OvlLay[layout].ReqType = ERRORL;
     }
 }
 //------------------------------------------------------------------
 ump_secure_id ovlGetUmpId(ScrnInfoPtr pScrn, OvlMemPg pg)
 {
     FBDevPtr pMxv = FBDEVPTR(pScrn);
-    OvlHWPtr	overlay = pMxv->OvlHW;
+    OvlHWPtr    overlay = pMxv->OvlHW;
 //    ump_secure_id ump_id = UMP_INVALID_SECURE_ID;
 
     if(pg >0 && pg < overlay->OvlMemPgs){
-	if(overlay->OvlMemPg[pg].ump_fb_secure_id == UMP_INVALID_SECURE_ID){
-	    overlay->OvlMemPg[pg].ump_fb_secure_id = pg-1;
-	    ioctl(overlay->OvlFb[MasterOvlFB].fd, GET_UMP_SECURE_ID_BUFn, &overlay->OvlMemPg[pg].ump_fb_secure_id);
-	}
-	return overlay->OvlMemPg[pg].ump_fb_secure_id;
+    if(overlay->OvlMemPg[pg].ump_fb_secure_id == UMP_INVALID_SECURE_ID){
+        overlay->OvlMemPg[pg].ump_fb_secure_id = pg-1;
+        ioctl(overlay->OvlFb[MasterOvlFB].fd, GET_UMP_SECURE_ID_BUFn, &overlay->OvlMemPg[pg].ump_fb_secure_id);
+    }
+    return overlay->OvlMemPg[pg].ump_fb_secure_id;
     }
     else
-	return UMP_INVALID_SECURE_ID;
+    return UMP_INVALID_SECURE_ID;
 }
 
 //++++++++++++++++++++++++++++++init/close+++++++++++++++++++++++++
@@ -754,23 +754,23 @@ int OvlUpdSavMod(ScrnInfoPtr pScrn)
 
     OVLDBG("***Res change***\n");
     if(pMxv->OvlHW != NULL){
-	OvlHWPtr overlay = pMxv->OvlHW;
-    	ret = ioctl(overlay->OvlFb[UserInterfaceFB].fd, FBIOGET_VSCREENINFO, &overlay->cur_var);
+    OvlHWPtr overlay = pMxv->OvlHW;
+        ret = ioctl(overlay->OvlFb[UserInterfaceFB].fd, FBIOGET_VSCREENINFO, &overlay->cur_var);
 
-	tmp = resToHDMImodes(overlay->cur_var.xres,overlay->cur_var.yres);
-	ioctl(overlay->OvlFb[UserInterfaceFB].fd, FBIOSET_HDMI_MODE, &tmp);//use HDMI scaling
+    tmp = resToHDMImodes(overlay->cur_var.xres,overlay->cur_var.yres);
+    ioctl(overlay->OvlFb[UserInterfaceFB].fd, FBIOSET_HDMI_MODE, &tmp);//use HDMI scaling
 
-//	overlay->cur_var.activate = 0;
-	for(i=0;i<OVLs;i++)
-	    overlay->OvlLay[i].ResChange = TRUE;
-//	overlay->cur_var.yres_virtual = overlay->cur_var.yres << 1;//double buf
-//	if(ioctl(overlay->OvlFb[MasterOvlFB].fd, FBIOPUT_VSCREENINFO, &overlay->cur_var)== 0){
-//	    memcpy(&overlay->OvlLay[0].var, &overlay->cur_var, sizeof(struct fb_var_screeninfo));
-//TODO	    ovlSelHwMods(pScrn, overlay->cur_var.nonstd, MasterOvlFB ?, DST_MODE);
-//	    ret = ioctl(overlay->fd_o2, FBIOPUT_VSCREENINFO, &overlay->cur_var);
-//	}
-	overlay->ResChange = TRUE;
-	OVLDBG("Resolution changed to %dx%d,  ret=%d ***\n", overlay->cur_var.xres, overlay->cur_var.yres, ret);
+//    overlay->cur_var.activate = 0;
+    for(i=0;i<OVLs;i++)
+        overlay->OvlLay[i].ResChange = TRUE;
+//    overlay->cur_var.yres_virtual = overlay->cur_var.yres << 1;//double buf
+//    if(ioctl(overlay->OvlFb[MasterOvlFB].fd, FBIOPUT_VSCREENINFO, &overlay->cur_var)== 0){
+//        memcpy(&overlay->OvlLay[0].var, &overlay->cur_var, sizeof(struct fb_var_screeninfo));
+//TODO        ovlSelHwMods(pScrn, overlay->cur_var.nonstd, MasterOvlFB ?, DST_MODE);
+//        ret = ioctl(overlay->fd_o2, FBIOPUT_VSCREENINFO, &overlay->cur_var);
+//    }
+    overlay->ResChange = TRUE;
+    OVLDBG("Resolution changed to %dx%d,  ret=%d ***\n", overlay->cur_var.xres, overlay->cur_var.yres, ret);
     }
     return ret;
 }
@@ -781,35 +781,35 @@ int OvlUpdSavMod(ScrnInfoPtr pScrn)
     int fd,tmp;
 
     if(pMxv->OvlHW != NULL){
-	OvlReset(pScrn);
-	OvlEnable(pScrn, 0);
-	fd = open("/dev/fb0", O_RDWR);
-	if (fd > 0){
-	    tmp=1;
-	    ioctl(fd, FBIOSET_ENABLE, &tmp);
-	    tmp=0;
-	    ioctl(fd, FBIOSET_OVERLAY_STATE, &tmp);
-//	    pMxv->OvlHW->cur_var.activate = 1;
-//	    ioctl(fd, FBIOPUT_VSCREENINFO, &pMxv->OvlHW->cur_var);
-	    close(fd);
+    OvlReset(pScrn);
+    OvlEnable(pScrn, 0);
+    fd = open("/dev/fb0", O_RDWR);
+    if (fd > 0){
+        tmp=1;
+        ioctl(fd, FBIOSET_ENABLE, &tmp);
+        tmp=0;
+        ioctl(fd, FBIOSET_OVERLAY_STATE, &tmp);
+//        pMxv->OvlHW->cur_var.activate = 1;
+//        ioctl(fd, FBIOPUT_VSCREENINFO, &pMxv->OvlHW->cur_var);
+        close(fd);
         }
-	free_ovl_memory(pMxv->OvlHW);
+    free_ovl_memory(pMxv->OvlHW);
         close(pMxv->OvlHW->fd);
         free(pMxv->OvlHW);
-	pMxv->OvlHW = NULL;
+    pMxv->OvlHW = NULL;
     }
 }*/
 //----------------------------------------------------------------------
 void set_ovl_param(ScrnInfoPtr pScrn)
 {
     FBDevPtr pMxv = FBDEVPTR(pScrn);
-    OvlHWPtr	overlay = pMxv->OvlHW;
+    OvlHWPtr    overlay = pMxv->OvlHW;
     uint32_t yuv_phy[2],ll;
     int i;
 
 //    overlay->pg_len = (rs + PAGE_MASK) & ~PAGE_MASK;
     for(i=0;i<OVLs;i++){
-	ioctl(overlay->OvlFb[i].fd, FBIOGET_FSCREENINFO, &overlay->OvlFb[i].fix);
+    ioctl(overlay->OvlFb[i].fd, FBIOGET_FSCREENINFO, &overlay->OvlFb[i].fix);
     }
 
     xf86DrvMsg( pScrn->scrnIndex, X_INFO, "Overlay memory pages\n");
@@ -817,52 +817,52 @@ void set_ovl_param(ScrnInfoPtr pScrn)
     ll = overlay->OvlFb[MasterOvlFB].fix.smem_len;
     i = 0;
     while(ll >= overlay->MaxPgSize){
-	overlay->OvlMemPgs = i + 1;
-	overlay->OvlMemPg[i].InUse = FALSE;
-	overlay->OvlMemPg[i].ump_fb_secure_id = UMP_INVALID_SECURE_ID;
-	if(i==0){
-	    overlay->OvlMemPg[i].offset = 0;
-	    overlay->OvlMemPg[i].offset_mio = 0;
-	    overlay->OvlMemPg[i].phadr_mem = overlay->OvlFb[UserInterfaceFB].fix.smem_start;
-	    overlay->OvlMemPg[i].phadr_mio = 0;
-	    overlay->OvlMemPg[i].fb_mem = pMxv->fbmem;
-//	    overlay->OvlMemPg[i].MemPgType = BufMem;
-	}
-	else{
-	    overlay->OvlMemPg[i].offset = overlay->MaxPgSize*(i-1);
-	    overlay->OvlMemPg[i].phadr_mem = overlay->OvlFb[MasterOvlFB].fix.smem_start+overlay->OvlMemPg[i].offset;
-	    overlay->OvlMemPg[i].offset_mio = ((overlay->MaxPgSize/2) & ~PAGE_MASK);
-	    overlay->OvlMemPg[i].phadr_mio = overlay->OvlMemPg[i].phadr_mem+overlay->OvlMemPg[i].offset_mio;
-	    overlay->OvlMemPg[i].fb_mem = NULL;
-	    overlay->OvlMemPg[i].MemPgType = BUF_MEM;
-	    overlay->OvlMemPg[i].ump_fb_secure_id = ovlGetUmpId( pScrn, i);
-	    OvlClearBuf(pScrn, &overlay->OvlMemPg[i]);
-	    ll -= overlay->MaxPgSize;
-	}
-	xf86DrvMsg( pScrn->scrnIndex, X_INFO, "Buf:%d Mem:0x%x Mio:0x%x Offset:%d sID:%d\n", i,
-	    overlay->OvlMemPg[i].phadr_mem,overlay->OvlMemPg[i].phadr_mio,
-	    overlay->OvlMemPg[i].offset, overlay->OvlMemPg[i].ump_fb_secure_id);
-	i++;
+    overlay->OvlMemPgs = i + 1;
+    overlay->OvlMemPg[i].InUse = FALSE;
+    overlay->OvlMemPg[i].ump_fb_secure_id = UMP_INVALID_SECURE_ID;
+    if(i==0){
+        overlay->OvlMemPg[i].offset = 0;
+        overlay->OvlMemPg[i].offset_mio = 0;
+        overlay->OvlMemPg[i].phadr_mem = overlay->OvlFb[UserInterfaceFB].fix.smem_start;
+        overlay->OvlMemPg[i].phadr_mio = 0;
+        overlay->OvlMemPg[i].fb_mem = pMxv->fbmem;
+//        overlay->OvlMemPg[i].MemPgType = BufMem;
+    }
+    else{
+        overlay->OvlMemPg[i].offset = overlay->MaxPgSize*(i-1);
+        overlay->OvlMemPg[i].phadr_mem = overlay->OvlFb[MasterOvlFB].fix.smem_start+overlay->OvlMemPg[i].offset;
+        overlay->OvlMemPg[i].offset_mio = ((overlay->MaxPgSize/2) & ~PAGE_MASK);
+        overlay->OvlMemPg[i].phadr_mio = overlay->OvlMemPg[i].phadr_mem+overlay->OvlMemPg[i].offset_mio;
+        overlay->OvlMemPg[i].fb_mem = NULL;
+        overlay->OvlMemPg[i].MemPgType = BUF_MEM;
+        overlay->OvlMemPg[i].ump_fb_secure_id = ovlGetUmpId( pScrn, i);
+        OvlClearBuf(pScrn, &overlay->OvlMemPg[i]);
+        ll -= overlay->MaxPgSize;
+    }
+    xf86DrvMsg( pScrn->scrnIndex, X_INFO, "Buf:%d Mem:0x%x Mio:0x%x Offset:%d sID:%d\n", i,
+        overlay->OvlMemPg[i].phadr_mem,overlay->OvlMemPg[i].phadr_mio,
+        overlay->OvlMemPg[i].offset, overlay->OvlMemPg[i].ump_fb_secure_id);
+    i++;
     }
 //set default 0-2 PGs - layer`s fb mem
     for(i=0;i<OVLs;i++){
-	overlay->OvlMemPg[i].MemPgType = FB_MEM;
-	overlay->OvlFb[i].OvlMemPg = &overlay->OvlMemPg[i];
-	overlay->OvlFb[i].FbType = i;//        UIL=0,    SCALEL=1,    NotSCALEL=2,
-	overlay->OvlLay[i].OvlFb = &overlay->OvlFb[i];
-	memcpy(&overlay->OvlLay[i].var, &overlay->cur_var, sizeof(struct fb_var_screeninfo));
-	overlay->OvlLay[i].InUse = FALSE;
-	overlay->OvlLay[i].ReqType = ERRORL;
-	overlay->OvlLay[i].ResChange = FALSE;
-	if(i>0){
-	    yuv_phy[0] = overlay->OvlMemPg[i].phadr_mem;
-	    yuv_phy[1] = overlay->OvlMemPg[i].phadr_mio; //four uv
-	    ioctl(overlay->OvlFb[i].fd, FBIOSET_YUV_ADDR, &yuv_phy);
-//	ovlSelHwMods(pScrn, overlay->OvlFb[i].var.nonstd, i, DST_MODE);
-//	ioctl(overlay->OvlFb[i].fd, FBIOPUT_VSCREENINFO, &overlay->cur_var);
-	    ovlSetMode(pScrn,0,0,0,i);
-	    OvlEnable(pScrn, i, 0);
-	}
+    overlay->OvlMemPg[i].MemPgType = FB_MEM;
+    overlay->OvlFb[i].OvlMemPg = &overlay->OvlMemPg[i];
+    overlay->OvlFb[i].FbType = i;//        UIL=0,    SCALEL=1,    NotSCALEL=2,
+    overlay->OvlLay[i].OvlFb = &overlay->OvlFb[i];
+    memcpy(&overlay->OvlLay[i].var, &overlay->cur_var, sizeof(struct fb_var_screeninfo));
+    overlay->OvlLay[i].InUse = FALSE;
+    overlay->OvlLay[i].ReqType = ERRORL;
+    overlay->OvlLay[i].ResChange = FALSE;
+    if(i>0){
+        yuv_phy[0] = overlay->OvlMemPg[i].phadr_mem;
+        yuv_phy[1] = overlay->OvlMemPg[i].phadr_mio; //four uv
+        ioctl(overlay->OvlFb[i].fd, FBIOSET_YUV_ADDR, &yuv_phy);
+//    ovlSelHwMods(pScrn, overlay->OvlFb[i].var.nonstd, i, DST_MODE);
+//    ioctl(overlay->OvlFb[i].fd, FBIOPUT_VSCREENINFO, &overlay->cur_var);
+        ovlSetMode(pScrn,0,0,0,i);
+        OvlEnable(pScrn, i, 0);
+    }
     }
     overlay->OvlMemPg[0].MemPgType = UIFB_MEM;
 //    xf86DrvMsg( pScrn->scrnIndex, X_INFO, "END: set_ovl_param\n");
@@ -887,18 +887,18 @@ Bool ovl_setup_ovl(ScrnInfoPtr pScrn)
     overlay->MaxPgSize = FB_MAXPGSIZE;
 
     if(OvlUpdSavMod(pScrn) == 0){
-	memcpy(&overlay->sav_var, &overlay->cur_var, sizeof(struct fb_var_screeninfo));
+    memcpy(&overlay->sav_var, &overlay->cur_var, sizeof(struct fb_var_screeninfo));
 /*
-	tmp=0;
-	ioctl(overlay->fd_o1, FBIOPUT_SET_COLORKEY, &tmp);
-	tmp=0;
-	ioctl(fd, FBIOPUT_SET_COLORKEY, &tmp);
+    tmp=0;
+    ioctl(overlay->fd_o1, FBIOPUT_SET_COLORKEY, &tmp);
+    tmp=0;
+    ioctl(fd, FBIOPUT_SET_COLORKEY, &tmp);
 */
-//	SelHWMods(pScrn, overlay->var.nonstd);
-//	ioctl(overlay->fd_o1, FBIOBLANK, FB_BLANK_UNBLANK);
+//    SelHWMods(pScrn, overlay->var.nonstd);
+//    ioctl(overlay->fd_o1, FBIOBLANK, FB_BLANK_UNBLANK);
 
-	tmp=1;
-	ioctl(overlay->OvlFb[UserInterfaceFB].fd, FBIOSET_OVERLAY_STATE, &tmp);
+    tmp=1;
+    ioctl(overlay->OvlFb[UserInterfaceFB].fd, FBIOSET_OVERLAY_STATE, &tmp);
 
         return(TRUE);
     }
@@ -920,7 +920,7 @@ Bool ovl_init_ovl(ScrnInfoPtr pScrn)
 
     pMxv->OvlHW = NULL;
     if(!(pMxv->OvlHW = calloc(1, sizeof(OvlHWRec) )))
-	goto err;
+    goto err;
     OvlHWPtr overlay = pMxv->OvlHW;
 
     if(!ovl_setup_ovl(pScrn)) goto err1;
@@ -928,8 +928,8 @@ Bool ovl_init_ovl(ScrnInfoPtr pScrn)
     set_ovl_param(pScrn);
 
     if(overlay->OvlFb[MasterOvlFB].fix.smem_len < overlay->MaxPgSize*4){
-	xf86DrvMsg( pScrn->scrnIndex, X_ERROR, "HW:Error overlay mem block size:%d\n",overlay->OvlFb[MasterOvlFB].fix.smem_len);
-	goto err2;
+    xf86DrvMsg( pScrn->scrnIndex, X_ERROR, "HW:Error overlay mem block size:%d\n",overlay->OvlFb[MasterOvlFB].fix.smem_len);
+    goto err2;
     }
 
     pthread_mutex_init(&overlay->rgamutex, NULL);
@@ -941,7 +941,7 @@ Bool ovl_init_ovl(ScrnInfoPtr pScrn)
 err2:
     for(i=0;i<OVLs;i++)
         if(overlay->OvlFb[i].fd>0)
-	    close(overlay->OvlFb[i].fd);
+        close(overlay->OvlFb[i].fd);
 err1:
     free(overlay);
     overlay = NULL;
@@ -960,8 +960,8 @@ void InitHWAcl(ScreenPtr pScreen)
     xf86DrvMsg( pScrn->scrnIndex, X_INFO, "HW:Main setup ovl\n");
 
     if(!ovl_init_ovl(pScrn)){
-	xf86DrvMsg( pScrn->scrnIndex, X_ERROR, "HW:Error init ovl\n");
-	return;
+    xf86DrvMsg( pScrn->scrnIndex, X_ERROR, "HW:Error init ovl\n");
+    return;
     }
 
     overlay = pMxv->OvlHW;
@@ -970,32 +970,32 @@ void InitHWAcl(ScreenPtr pScreen)
         xf86DrvMsg(pScreen->myNum, X_INFO, "can't load 'rk29-ipp' kernel module\n");
     overlay->fd_IPP = ovlInitIPPHW(pScrn);
     if(overlay->fd_IPP <= 0){
-	xf86DrvMsg( pScrn->scrnIndex, X_ERROR, "HW:Error init ipp\n");
+    xf86DrvMsg( pScrn->scrnIndex, X_ERROR, "HW:Error init ipp\n");
     }
     else
-	xf86DrvMsg( pScrn->scrnIndex, X_INFO, "HW:Initialized ipp\n");
+    xf86DrvMsg( pScrn->scrnIndex, X_INFO, "HW:Initialized ipp\n");
 
     xf86DrvMsg( pScrn->scrnIndex, X_INFO, "HW:Try init rga\n");
     overlay->fd_RGA = ovlInitRGAHW(pScrn);
     if(overlay->fd_RGA <= 0){
-	xf86DrvMsg( pScrn->scrnIndex, X_ERROR, "HW:Error init rga\n");
+    xf86DrvMsg( pScrn->scrnIndex, X_ERROR, "HW:Error init rga\n");
     }
     else
-	xf86DrvMsg( pScrn->scrnIndex, X_INFO, "HW:Initialized rga\n");
+    xf86DrvMsg( pScrn->scrnIndex, X_INFO, "HW:Initialized rga\n");
     return;
 /*
 err:
     xf86DrvMsg( pScrn->scrnIndex, X_INFO, "HW:Init ovl failed\n");
     if(overlay != NULL){
-	if(overlay->fd_IPP > 0)
-	    close(overlay->fd_IPP);
-	if(overlay->fd_RGA > 0)
-	    close(overlay->fd_RGA);
+    if(overlay->fd_IPP > 0)
+        close(overlay->fd_IPP);
+    if(overlay->fd_RGA > 0)
+        close(overlay->fd_RGA);
 
-	free_ovl_memory(overlay);
+    free_ovl_memory(overlay);
         close(overlay->fd_o1);
         free(overlay);
-	overlay = NULL;
+    overlay = NULL;
     }
 */
 }
@@ -1008,24 +1008,24 @@ void CloseHWAcl(ScreenPtr pScreen)
 
     xf86DrvMsg( pScrn->scrnIndex, X_INFO, "HW:Close\n");
     if(pMxv->OvlHW != NULL){
-	OvlHWPtr overlay = pMxv->OvlHW;
-	if(overlay->fd_IPP > 0)
-	    close(overlay->fd_IPP);
-	if(overlay->fd_RGA > 0)
-	    close(overlay->fd_RGA);
+    OvlHWPtr overlay = pMxv->OvlHW;
+    if(overlay->fd_IPP > 0)
+        close(overlay->fd_IPP);
+    if(overlay->fd_RGA > 0)
+        close(overlay->fd_RGA);
 
-	OvlReset(pScrn);
-	OvlEnable(pScrn, FBO1, 0);
-	OvlEnable(pScrn, FBO2, 0);
+    OvlReset(pScrn);
+    OvlEnable(pScrn, FBO1, 0);
+    OvlEnable(pScrn, FBO2, 0);
 
-	while(overlay->OvlMemPgs>0){
-	    overlay->OvlMemPgs--;
-	    OvlUnMapBufMem(pScrn, &overlay->OvlMemPg[overlay->OvlMemPgs]);
-	}
-	for(i=0;i<OVLs;i++)
-	    if(overlay->OvlFb[i].fd>0)
-		close(overlay->OvlFb[i].fd);
+    while(overlay->OvlMemPgs>0){
+        overlay->OvlMemPgs--;
+        OvlUnMapBufMem(pScrn, &overlay->OvlMemPg[overlay->OvlMemPgs]);
+    }
+    for(i=0;i<OVLs;i++)
+        if(overlay->OvlFb[i].fd>0)
+        close(overlay->OvlFb[i].fd);
         free(overlay);
-	overlay = NULL;
+    overlay = NULL;
     }
 }

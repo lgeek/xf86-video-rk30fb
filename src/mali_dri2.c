@@ -153,8 +153,8 @@ static DRI2Buffer2Ptr MaliDRI2CreateBuffer(DrawablePtr  pDraw,
     }
 
     if(attachment != DRI2BufferBackLeft && rk_3d->buf_back != NULL){
-	DebugMsg("DRI2 return NullBuffer\n");
-	return rk_3d->buf_back;
+    DebugMsg("DRI2 return NullBuffer\n");
+    return rk_3d->buf_back;
     }
 
     if (!(buffer = calloc(1, sizeof *buffer))) {
@@ -233,7 +233,7 @@ static DRI2Buffer2Ptr MaliDRI2CreateBuffer(DrawablePtr  pDraw,
 */
 /*
     if((pDraw->width+pDraw->x) > overlay->cur_var.xres ||
-		(pDraw->height+pDraw->y) > overlay->cur_var.yres)
+        (pDraw->height+pDraw->y) > overlay->cur_var.yres)
         can_use_overlay = FALSE;
 */
     if(pDraw->width < 2 || pDraw->height < 2){
@@ -242,46 +242,46 @@ static DRI2Buffer2Ptr MaliDRI2CreateBuffer(DrawablePtr  pDraw,
 
     if(attachment != DRI2BufferBackLeft){
 //     can_use_overlay = FALSE;
-	free(privates);
-	buffer->driverPrivate = NULL;
-	buffer->name = UMP_INVALID_SECURE_ID;
-	if(rk_3d->buf_back == NULL)
-	    rk_3d->buf_back = buffer;
-	goto end;
+    free(privates);
+    buffer->driverPrivate = NULL;
+    buffer->name = UMP_INVALID_SECURE_ID;
+    if(rk_3d->buf_back == NULL)
+        rk_3d->buf_back = buffer;
+    goto end;
     }
 
     if(rk_3d->OvlPg == ERRORL){
-	rk_3d->OvlPg = OvlAllocLay(pScrn, ANYL);
-	if(rk_3d->OvlPg == ERRORL)
-	    can_use_overlay = FALSE;
-	else{//init
-	    OvlSetupFb(pScrn, 0, 0, rk_3d->OvlPg);
-	    OvlEnable(pScrn, rk_3d->OvlPg, 1);
-	}
+    rk_3d->OvlPg = OvlAllocLay(pScrn, ANYL);
+    if(rk_3d->OvlPg == ERRORL)
+        can_use_overlay = FALSE;
+    else{//init
+        OvlSetupFb(pScrn, 0, 0, rk_3d->OvlPg);
+        OvlEnable(pScrn, rk_3d->OvlPg, 1);
+    }
     }
 
     rk_3d->bOverlayWinEnabled = can_use_overlay;
 
     if (can_use_overlay)
         rk_3d->pOverlayWin = (WindowPtr)pDraw;
-//	buffer->pitch         = ((buffer->cpp * overlay->OvlLay[rk_3d->OvlPg].var.xres_virtual + 7) / 8) * 8;
-//	rk_3d->bOverlayWinEnabled = TRUE;
+//    buffer->pitch         = ((buffer->cpp * overlay->OvlLay[rk_3d->OvlPg].var.xres_virtual + 7) / 8) * 8;
+//    rk_3d->bOverlayWinEnabled = TRUE;
 
 
 // Stride must be 8 bytes aligned for Mali400
-//	privates->size   = pDraw->height * buffer->pitch;
-//	buffer->flags = 0;
+//    privates->size   = pDraw->height * buffer->pitch;
+//    buffer->flags = 0;
 
-	privates->handle = UMP_INVALID_MEMORY_HANDLE;
-	privates->addr = NULL;
-	buffer->name = rk_3d->ump_fb_secure_id1;
-	privates->handle = ump_handle_create_from_secure_id(buffer->name);
-	privates->addr = ump_mapped_pointer_get(privates->handle);
+    privates->handle = UMP_INVALID_MEMORY_HANDLE;
+    privates->addr = NULL;
+    buffer->name = rk_3d->ump_fb_secure_id1;
+    privates->handle = ump_handle_create_from_secure_id(buffer->name);
+    privates->addr = ump_mapped_pointer_get(privates->handle);
 //        privates->addr = NULL;//(void*)0x94000000;
 /*    }
     else
     {
-//	rk_3d->bOverlayWinEnabled = FALSE;
+//    rk_3d->bOverlayWinEnabled = FALSE;
 //        Allocate UMP memory buffer
 #ifdef HAVE_LIBUMP_CACHE_CONTROL
         privates->handle = ump_ref_drv_allocate(privates->size,
@@ -339,7 +339,7 @@ static void MaliDRI2DestroyBuffer(DrawablePtr pDraw, DRI2Buffer2Ptr buffer)
             free(privates);
         }
     }
-	if(buffer != rk_3d->buf_back)
+    if(buffer != rk_3d->buf_back)
         free(buffer);
     }
 
@@ -409,18 +409,18 @@ void Reset_3DOvl(ScreenPtr pScreen, Bool FR)
     DebugMsg("Enter Reset_ovl\n");
 
     if(FR){
-	i = 0;
+    i = 0;
     }
     else{
-	pt.poffset_x = 0;
-	pt.poffset_y = 0;
-	pt.scale_w = 0 ;
-	pt.scale_h = 0;
-	pt.ssize_w = overlay->cur_var.xres;
-	pt.ssize_h = overlay->cur_var.yres;
+    pt.poffset_x = 0;
+    pt.poffset_y = 0;
+    pt.scale_w = 0 ;
+    pt.scale_h = 0;
+    pt.ssize_w = overlay->cur_var.xres;
+    pt.ssize_h = overlay->cur_var.yres;
         ioctl(rk_3d->fd_3d, FBIOSET_DISP_PSET, &pt);
-	i = 1;
-//	memcpy(&rk_3d->fb_var, &overlay->sav_var, sizeof(struct fb_var_screeninfo));
+    i = 1;
+//    memcpy(&rk_3d->fb_var, &overlay->sav_var, sizeof(struct fb_var_screeninfo));
     }
 
 //    OvlClearBuf(pScrn, 0, FB);
@@ -430,12 +430,12 @@ void Reset_3DOvl(ScreenPtr pScreen, Bool FR)
     ioctl(rk_3d->fd_3d, FBIOSET_FBMEM_OFFSET, &tmp);
 */
 /*    if(FR){
-	OvlResetFB(pScrn, FBUI);
-	OvlResetFB(pScrn, FB3D);
+    OvlResetFB(pScrn, FBUI);
+    OvlResetFB(pScrn, FB3D);
     }
     else
-	ioctl(rk_3d->fd_3d, FBIOPUT_VSCREENINFO, &overlay->cur_var);
-//	ioctl(rk_3d->fd_3d, FBIOPAN_DISPLAY, &overlay->cur_var);
+    ioctl(rk_3d->fd_3d, FBIOPUT_VSCREENINFO, &overlay->cur_var);
+//    ioctl(rk_3d->fd_3d, FBIOPAN_DISPLAY, &overlay->cur_var);
 
     ioctl(rk_3d->fd_3d, FBIOSET_ENABLE, &i);
 */
@@ -453,7 +453,7 @@ static void MaliDRI2CopyRegion(DrawablePtr   pDraw,
     FBDevPtr pMxv = FBDEVPTR(pScrn);
     Rk30MaliPtr rk_3d = pMxv->Rk30Mali;
     OvlHWPtr overlay = pMxv->OvlHW;
-    Bool	Change=FALSE;
+    Bool    Change=FALSE;
     int ret;
 
     MaliDRI2BufferPrivatePtr bufpriv = (MaliDRI2BufferPrivatePtr)pSrcBuffer->driverPrivate;
@@ -469,20 +469,20 @@ static void MaliDRI2CopyRegion(DrawablePtr   pDraw,
     }
 
     if(rk_3d->ovl_x != pDraw->x || rk_3d->ovl_y != pDraw->y){
-	rk_3d->ovl_x = pDraw->x;
-	rk_3d->ovl_y = pDraw->y;
-	Change = TRUE;
+    rk_3d->ovl_x = pDraw->x;
+    rk_3d->ovl_y = pDraw->y;
+    Change = TRUE;
         DebugMsg("Change pos to x:%d,y:%d\n", pDraw->x,pDraw->y);
     }
     if(rk_3d->ovl_h != pDraw->height || rk_3d->ovl_w != pDraw->width){
-	rk_3d->ovl_h = pDraw->height;
-	rk_3d->ovl_w = pDraw->width;
-	Change = TRUE;
+    rk_3d->ovl_h = pDraw->height;
+    rk_3d->ovl_w = pDraw->width;
+    Change = TRUE;
         DebugMsg("Change size to w:%d,h:%d\n", pDraw->width,pDraw->height);
     }
 
     if(Change)
-	OvlSetupBufDrw(pScrn, pDraw->x, pDraw->y, pDraw->width, pDraw->height, overlay->cur_var.xres_virtual, rk_3d->OvlPg);
+    OvlSetupBufDrw(pScrn, pDraw->x, pDraw->y, pDraw->width, pDraw->height, overlay->cur_var.xres_virtual, rk_3d->OvlPg);
 
     ret = OvlCpBufToDisp(pScrn, rk_3d->PMemBuf, rk_3d->OvlPg);
     DebugMsg("OvlCpBufToDisp ret:%d\n", ret);
@@ -502,24 +502,24 @@ DestroyWindow(WindowPtr pWin)
 
 
     if (pWin == rk_3d->pOverlayWin) {
-//	Reset_3DOvl(pScreen, 1);
-	rk_3d->lstatus = ST_INIT;
+//    Reset_3DOvl(pScreen, 1);
+    rk_3d->lstatus = ST_INIT;
         rk_3d->ovl_cr = FALSE;
         rk_3d->pOverlayWin = NULL;
-	rk_3d->ovl_x = 0;
-	rk_3d->ovl_y = 0;
-	rk_3d->ovl_w = 0;
-	rk_3d->ovl_h = 0;
-	if(rk_3d->OvlPg != ERRORL){
+    rk_3d->ovl_x = 0;
+    rk_3d->ovl_y = 0;
+    rk_3d->ovl_w = 0;
+    rk_3d->ovl_h = 0;
+    if(rk_3d->OvlPg != ERRORL){
 //TODO clear
-	    OvlEnable(pScrn, rk_3d->OvlPg, 0);
-	    OvlFreeLay(pScrn, rk_3d->OvlPg);
-	    rk_3d->OvlPg = ERRORL;
-	}
-	if(rk_3d->buf_back){
-	    free(rk_3d->buf_back);
-	    rk_3d->buf_back = NULL;
-	}
+        OvlEnable(pScrn, rk_3d->OvlPg, 0);
+        OvlFreeLay(pScrn, rk_3d->OvlPg);
+        rk_3d->OvlPg = ERRORL;
+    }
+    if(rk_3d->buf_back){
+        free(rk_3d->buf_back);
+        rk_3d->buf_back = NULL;
+    }
 
         DebugMsg("DestroyWindow %p\n", pWin);
     }
@@ -583,7 +583,7 @@ void Rk30MaliDRI2_Init(ScreenPtr pScreen)
 
     pMxv->Rk30Mali = NULL;
     if(pMxv->OvlHW == NULL){
-    	xf86DrvMsg(pScreen->myNum, X_ERROR, "Rk30MaliDRI2_Init: Overlay not found!\n");
+        xf86DrvMsg(pScreen->myNum, X_ERROR, "Rk30MaliDRI2_Init: Overlay not found!\n");
         return;
     }
 
@@ -618,11 +618,11 @@ void Rk30MaliDRI2_Init(ScreenPtr pScreen)
         goto err0;
     }
 
-    Rk30MaliPtr	rk_3d = pMxv->Rk30Mali;
+    Rk30MaliPtr    rk_3d = pMxv->Rk30Mali;
 
     rk_3d->PMemBuf = OvlAllocMemPg(pScrn, BUF_MEM);
     if(rk_3d->PMemBuf == NULL){
-	xf86DrvMsg(pScreen->myNum, X_INFO, "Alloc fb buf failed\n");
+    xf86DrvMsg(pScreen->myNum, X_INFO, "Alloc fb buf failed\n");
         goto err1;
     }
 
@@ -654,13 +654,13 @@ void Rk30MaliDRI2_Init(ScreenPtr pScreen)
 Bool USE_PAGEFLIP = TRUE;
     if (USE_PAGEFLIP)
     {
-	info.version = 4;
-	info.ScheduleSwap = MaliDRI2ScheduleSwap;
-	info.GetMSC = NULL;
-	info.ScheduleWaitMSC = NULL;
-	info.numDrivers = 1;
-	info.driverNames = driverNames;
-	driverNames[0] = info.driverName;
+    info.version = 4;
+    info.ScheduleSwap = MaliDRI2ScheduleSwap;
+    info.GetMSC = NULL;
+    info.ScheduleWaitMSC = NULL;
+    info.numDrivers = 1;
+    info.driverNames = driverNames;
+    driverNames[0] = info.driverName;
     }
 #endif
 */
@@ -681,14 +681,14 @@ Bool USE_PAGEFLIP = TRUE;
         rk_3d->ump_fb_secure_id1 = ump_id1;
 //        rk_3d->ump_fb_secure_id2 = ump_id2;
         rk_3d->drm_fd = drm_fd;
-	rk_3d->ovl_x = 0;
-	rk_3d->ovl_y = 0;
-	rk_3d->ovl_w = 0;
-	rk_3d->ovl_h = 0;
-//	rk_3d->lstatus = ST_INIT;
-//	rk_3d->ovl_cr = FALSE;
-	rk_3d->buf_back = NULL;
-	rk_3d->OvlPg = ERRORL;
+    rk_3d->ovl_x = 0;
+    rk_3d->ovl_y = 0;
+    rk_3d->ovl_w = 0;
+    rk_3d->ovl_h = 0;
+//    rk_3d->lstatus = ST_INIT;
+//    rk_3d->ovl_cr = FALSE;
+    rk_3d->buf_back = NULL;
+    rk_3d->OvlPg = ERRORL;
 
         return;
     }
@@ -708,8 +708,8 @@ void Rk30MaliDRI2_Close(ScreenPtr pScreen)
     FBDevPtr pMxv = FBDEVPTR(pScrn);
 
     if (pMxv->Rk30Mali != NULL) {
-	OvlHWPtr overlay = pMxv->OvlHW;
-	Rk30MaliPtr	rk_3d = pMxv->Rk30Mali;
+    OvlHWPtr overlay = pMxv->OvlHW;
+    Rk30MaliPtr    rk_3d = pMxv->Rk30Mali;
 
     /* Unwrap functions */
         pScreen->DestroyWindow    = rk_3d->DestroyWindow;
@@ -717,17 +717,17 @@ void Rk30MaliDRI2_Close(ScreenPtr pScreen)
 //    pScreen->GetImage         = rk_3d->GetImage;
         pScreen->DestroyPixmap    = rk_3d->DestroyPixmap;
 
-	OvlFreeMemPg(pScrn, rk_3d->PMemBuf);
+    OvlFreeMemPg(pScrn, rk_3d->PMemBuf);
 
-//	    Reset_3DOvl(pScreen,1);
+//        Reset_3DOvl(pScreen,1);
 
-	if(rk_3d->buf_back){
-	    free(rk_3d->buf_back);
-	    rk_3d->buf_back = NULL;
-	}
-	DRI2CloseScreen(pScreen);
-	drmClose(rk_3d->drm_fd);
-	free(rk_3d);
-	rk_3d = NULL;
+    if(rk_3d->buf_back){
+        free(rk_3d->buf_back);
+        rk_3d->buf_back = NULL;
+    }
+    DRI2CloseScreen(pScreen);
+    drmClose(rk_3d->drm_fd);
+    free(rk_3d);
+    rk_3d = NULL;
     }
 }
