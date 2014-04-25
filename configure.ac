@@ -84,7 +84,7 @@ fi
 
 AC_SUBST([moduledir])
 
-DRIVER_NAME=fbdev
+DRIVER_NAME=rk30fb
 AC_SUBST([DRIVER_NAME])
 
 AC_CONFIG_FILES([
